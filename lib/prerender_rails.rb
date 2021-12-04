@@ -8,7 +8,6 @@ module Rack
         'close',
         'keep-alive'
       ].freeze
-
       @hop_by_hop_headers = [
         'Connection',
         'Keep-Alive',
@@ -49,7 +48,8 @@ module Rack
         'Discordbot',
         'Google Page Speed',
         'Qwantify',
-        'Chrome-Lighthouse'
+        'Chrome-Lighthouse',
+        'TelegramBot'
       ]
 
       @extensions_to_ignore = [
@@ -136,10 +136,10 @@ module Rack
       request = Rack::Request.new(env)
 
       # if it is BufferBot, escaped fragment or bot
-      # -> ready for prerender: check extensions, blacklist and whitelist
+      # -> request is for prerendered page
       # else
-      # -> return false, will not be prerendered
-      return false unless buffer_agent || escaped_fragment?(request) || crawler?(user_agent)
+      # -> do not send prerendered page
+      is_requesting_prerendered_page = buffer_agent || escaped_fragment?(request) || crawler?(user_agent)
 
       #if it is a bot and is requesting a resource...dont prerender
       return false if @extensions_to_ignore.any? { |extension| request.fullpath.include? extension }
@@ -160,7 +160,7 @@ module Rack
         return false
       end
 
-      true
+      return is_requesting_prerendered_page
     end
 
 
