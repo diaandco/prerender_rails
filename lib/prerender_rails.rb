@@ -136,10 +136,10 @@ module Rack
       request = Rack::Request.new(env)
 
       # if it is BufferBot, escaped fragment or bot
-      # -> request is for prerendered page
+      # -> ready for prerender: check extensions, blacklist and whitelist
       # else
-      # -> do not send prerendered page
-      is_requesting_prerendered_page = buffer_agent || escaped_fragment?(request) || crawler?(user_agent)
+      # -> return false, will not be prerendered
+      return false unless buffer_agent || escaped_fragment?(request) || crawler?(user_agent)
 
       #if it is a bot and is requesting a resource...dont prerender
       return false if @extensions_to_ignore.any? { |extension| request.fullpath.include? extension }
@@ -160,7 +160,7 @@ module Rack
         return false
       end
 
-      return is_requesting_prerendered_page
+      true
     end
 
 
