@@ -8,7 +8,6 @@ module Rack
         'close',
         'keep-alive'
       ].freeze
-
       @hop_by_hop_headers = [
         'Connection',
         'Keep-Alive',
@@ -49,7 +48,8 @@ module Rack
         'Discordbot',
         'Google Page Speed',
         'Qwantify',
-        'Chrome-Lighthouse'
+        'Chrome-Lighthouse',
+        'TelegramBot'
       ]
 
       @extensions_to_ignore = [
