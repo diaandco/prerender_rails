@@ -126,12 +126,15 @@ module Rack
     def should_show_prerendered_page(env)
       user_agent = env['HTTP_USER_AGENT']
       buffer_agent = env['HTTP_X_BUFFERBOT']
-      prerender_agent = env['HTTP_X_PRERENDER']
+      prerender_agent = env['HTTP_X_PRERENDER'] || user_agent&.include?("Prerender")
 
       return false if !user_agent
       return false if env['REQUEST_METHOD'] != 'GET'
       # if it is Prerender.io (or similar) making the request, don't show prerendered page
-      return false if prerender_agent
+      if prerender_agent
+        env['prerender_request'] = true
+        return false
+      end
 
       request = Rack::Request.new(env)
 
